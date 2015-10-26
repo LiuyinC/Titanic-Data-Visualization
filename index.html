@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    .chart rect.total {
+      fill: tomato;
+      /*fill-opacity: 0.5;*/
+    }
+    .chart rect.survived {
+      fill: steelblue;
+    }
+
+    .chart text {
+      /*fill: white;*/
+      /*font: 20px sans-serif;*/
+      font: 20px sans-serif;
+      text-anchor: start;
+    }
+  </style>
+  <title>Titanic Data Visualization</title>
+</head>
+<body>
+  <svg class="chart"></svg>
+  <script src="./js/d3.js"></script>
+  <script src="./js/viz.js"></script>
+</body>
+</html>
