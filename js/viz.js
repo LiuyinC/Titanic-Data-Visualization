@@ -6,6 +6,11 @@ function main(rawData) {
   draw(rawData, aggData);
 }
 
+/**
+ * get statistics of the data
+ * @param data
+ * @returns {*[]}
+ */
 function aggregate(data) {
   var result = [
     {
@@ -104,18 +109,23 @@ function aggregate(data) {
   ];
 
   data.forEach(function(d) {
+    // get passenger class in result
     var pclass = result.filter(function(pclass) {
       return pclass.key == d.Pclass;
     })[0];
+    // get gender in the above Pclass
     var sex = pclass.value.filter(function(sex) {
       return sex.key == d.Sex;
     })[0];
+    // get total count in the above gender
     var total = sex.value.filter(function(e) {
       return e.key == 'total';
     })[0];
+    // get survived count in the above gender
     var survived = sex.value.filter(function(e) {
       return e.key == 'survived';
     })[0];
+    // increment the total count and survived count
     total.value ++;
     survived.value += +d.Survived;
   });
@@ -139,12 +149,15 @@ function draw(rawData, aggData) {
     .append("g")
     .attr("transform", function(d, i) { return "translate(0," + i * d.value.length * barHeight + ")"; });
 
+  var pclassLabel = pclass.append("text")
+    .text(function(d) { return "Passenger class " + d.key; })
+    .attr('transform', function() { return 'translate(0, ' + barHeight + ')'; });
+
   var sex = pclass.selectAll('g')
     .data(function(d) { return d.value; })
     .enter()
     .append('g')
-    .attr('transform', function(d, i) { return 'translate(0,' + i * barHeight + ')'; })
-    ;
+    .attr('transform', function(d, i) { return 'translate(' + this.parentNode.children[0].offsetWidth + ', ' + i * barHeight + ')'; });
 
   sex.append("rect")
     .attr("width", function(d) {
@@ -185,7 +198,7 @@ function draw(rawData, aggData) {
       })[0].value;
       var text = survived.toString() + '/' + total.toString();
       return text;
-    })
+    });
 }
 
 d3.csv('data/train.csv', main);
