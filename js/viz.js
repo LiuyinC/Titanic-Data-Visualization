@@ -20,11 +20,11 @@ function aggregate(data) {
           key: 'female',
           value: [
             {
-              key: 'survived',
+              key: 'total',
               value: 0
             },
             {
-              key: 'total',
+              key: 'survived',
               value: 0
             }
           ]
@@ -33,11 +33,11 @@ function aggregate(data) {
           key: 'male',
           value: [
             {
-              key: 'survived',
+              key: 'total',
               value: 0
             },
             {
-              key: 'total',
+              key: 'survived',
               value: 0
             }
           ]
@@ -51,11 +51,11 @@ function aggregate(data) {
           key: 'female',
           value: [
             {
-              key: 'survived',
+              key: 'total',
               value: 0
             },
             {
-              key: 'total',
+              key: 'survived',
               value: 0
             }
           ]
@@ -64,11 +64,11 @@ function aggregate(data) {
           key: 'male',
           value: [
             {
-              key: 'survived',
+              key: 'total',
               value: 0
             },
             {
-              key: 'total',
+              key: 'survived',
               value: 0
             }
           ]
@@ -82,11 +82,11 @@ function aggregate(data) {
           key: 'female',
           value: [
             {
-              key: 'survived',
+              key: 'total',
               value: 0
             },
             {
-              key: 'total',
+              key: 'survived',
               value: 0
             }
           ]
@@ -95,11 +95,11 @@ function aggregate(data) {
           key: 'male',
           value: [
             {
-              key: 'survived',
+              key: 'total',
               value: 0
             },
             {
-              key: 'total',
+              key: 'survived',
               value: 0
             }
           ]
@@ -159,25 +159,13 @@ function draw(rawData, aggData) {
     .append('g')
     .attr('transform', function(d, i) { return 'translate(' + this.parentNode.children[0].offsetWidth + ', ' + i * barHeight + ')'; });
 
-  sex.append("rect")
-    .attr("width", function(d) {
-      var totalCount = d.value.filter(function(e) {
-        return e.key == 'total';
-      })[0].value;
-      return x(totalCount);
-    })
-    .attr("height", barHeight - gutter)
-    .attr('class', 'total');
-
-  sex.append("rect")
-    .attr("width", function(d) {
-      var survivedCount = d.value.filter(function(e) {
-        return e.key == 'survived';
-      })[0].value;
-      return x(survivedCount);
-    })
-    .attr('class', 'survived')
-    .attr("height", barHeight - gutter);
+  sex.selectAll('rect')
+    .data(function(d) { return d.value; })
+    .enter()
+    .append('rect')
+    .attr('width', function(d) { return x(d.value); })
+    .attr('class', function(d) {return d.key; })
+    .attr('height', barHeight - gutter);
 
   sex.append("text")
     .attr("dx", function(d) {
