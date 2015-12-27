@@ -137,6 +137,8 @@ function draw(rawData, aggData) {
   var width = 1000;
   var barHeight = 40;
   var gutter = 5;
+  var pclassLabelWidth = 170;
+  var genderLabelWidth = 70;
   var height = barHeight * 6; // total 6 bars
 
   var x = d3.scale.linear().domain([0, rawData.length]).range([0, width]);
@@ -147,32 +149,40 @@ function draw(rawData, aggData) {
     .data(aggData)
     .enter()
     .append("g")
+    // have to use transform because g tag doesn't have x y dx dy attributes
     .attr("transform", function(d, i) { return "translate(0," + i * d.value.length * barHeight + ")"; });
 
   var pclassLabel = pclass.append("text")
     .text(function(d) { return "Passenger class " + d.key; })
-    .attr('transform', function() { return 'translate(0, ' + barHeight + ')'; });
+    .attr('y', barHeight);
 
   var sex = pclass.selectAll('g')
     .data(function(d) { return d.value; })
     .enter()
     .append('g')
-    .attr('transform', function(d, i) { return 'translate(' + this.parentNode.children[0].offsetWidth + ', ' + i * barHeight + ')'; });
+    // have to use transform because g tag doesn't have x y dx dy attributes
+    .attr('transform', function(d, i) { return 'translate(' + pclassLabelWidth + ', ' + i * barHeight + ')'; });
+
+  var sexLabel = sex.append('text')
+    .text(function(d) { return d.key; })
+    .attr('x', gutter)
+    .attr('y', barHeight / 2);
 
   sex.selectAll('rect')
     .data(function(d) { return d.value; })
     .enter()
     .append('rect')
     .attr('width', function(d) { return x(d.value); })
-    .attr('class', function(d) {return d.key; })
-    .attr('height', barHeight - gutter);
+    .attr('height', barHeight - gutter)
+    .attr('class', function(d) { return d.key; })
+    .attr('x', genderLabelWidth);
 
   sex.append("text")
-    .attr("dx", function(d) {
+    .attr("x", function(d) {
       var total = d.value.filter(function(e) {
         return e.key == 'total';
       })[0].value;
-      return x(total + 5);
+      return x(total + gutter) + genderLabelWidth;
     })
     .attr('text-anchor', 'start')
     .attr("y", barHeight / 2)
