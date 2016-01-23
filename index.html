@@ -4,16 +4,15 @@
   <meta charset="UTF-8">
   <style>
     .chart rect.total {
-      fill: tomato;
-      /*fill-opacity: 0.5;*/
+      fill: transparent;
+      stroke: black;
+      stroke-width: 1px;
     }
     .chart rect.survived {
       fill: steelblue;
     }
 
     .chart text {
-      /*fill: white;*/
-      /*font: 20px sans-serif;*/
       font: 20px sans-serif;
       text-anchor: start;
     }
@@ -21,6 +20,7 @@
   <title>Titanic Data Visualization</title>
 </head>
 <body>
+  <h1>Titanic Survival Rate</h1>
   <svg class="chart"></svg>
   <script src="./js/d3.js"></script>
   <script src="./js/viz.js"></script>
