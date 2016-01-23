@@ -197,6 +197,35 @@ function draw(rawData, aggData) {
       var text = survived.toString() + '/' + total.toString();
       return text;
     });
+
+  var legends = chart.append('g')
+    .attr('class', 'legends')
+    .attr('transform', 'translate(550, 0)');
+
+  var survivedLegend = legends.append('g');
+
+  var survivedLegendRect = survivedLegend.append('rect')
+    .attr('width', 40)
+    .attr('height', 20)
+    .attr('class', 'survived');
+  var survivedLegendLabel = survivedLegend.append('text')
+    .text('survived')
+    .attr('x', 45)
+    .attr('y', 16);
+
+  var totalLegend = legends.append('g')
+    .attr('transform', 'translate(0, 25)');
+
+  var totalLegendRect = totalLegend.append('rect')
+    .attr('width', 40)
+    .attr('height', 20)
+    .attr('class', 'total');
+
+  var totalLegendLabel = totalLegend.append('text')
+    .text('not survived')
+    .attr('x', 45)
+    .attr('y', 16);
+
 }
 
 d3.csv('data/train.csv', main);
