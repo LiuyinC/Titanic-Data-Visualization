@@ -139,9 +139,9 @@ function draw(rawData, aggData) {
   var gutter = 5;
   var pclassLabelWidth = 170;
   var genderLabelWidth = 70;
-  var height = barHeight * 6; // total 6 bars
+  var height = barHeight * 6 + 100; // total 6 bars
 
-  var x = d3.scale.linear().domain([0, rawData.length]).range([0, width]);
+  var xScale = d3.scale.linear().domain([0, rawData.length]).range([0, width]);
 
   var chart = d3.select(".chart").attr("width", width).attr("height", height);
 
@@ -172,7 +172,7 @@ function draw(rawData, aggData) {
     .data(function(d) { return d.value; })
     .enter()
     .append('rect')
-    .attr('width', function(d) { return x(d.value); })
+    .attr('width', function(d) { return xScale(d.value); })
     .attr('height', barHeight - gutter)
     .attr('class', function(d) { return d.key; })
     .attr('x', genderLabelWidth);
@@ -182,7 +182,7 @@ function draw(rawData, aggData) {
       var total = d.value.filter(function(e) {
         return e.key == 'total';
       })[0].value;
-      return x(total + gutter) + genderLabelWidth;
+      return xScale(total + gutter) + genderLabelWidth;
     })
     .attr('text-anchor', 'start')
     .attr("y", barHeight / 2)
@@ -225,6 +225,13 @@ function draw(rawData, aggData) {
     .text('not survived')
     .attr('x', 45)
     .attr('y', 16);
+
+  //Create the Axis
+  var xAxis = d3.svg.axis().scale(xScale);
+
+  //Create an SVG group Element for the Axis elements and call the xAxis function
+  var xAxisGroup = chart.append("g").call(xAxis)
+    .attr('transform', 'translate(239, 245)');
 
 }
 
