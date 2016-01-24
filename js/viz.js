@@ -114,15 +114,15 @@ function aggregate(data) {
       return pclass.key == d.Pclass;
     })[0];
     // get gender in the above Pclass
-    var sex = pclass.value.filter(function(sex) {
-      return sex.key == d.Sex;
+    var gender = pclass.value.filter(function(gender) {
+      return gender.key == d.Sex;
     })[0];
     // get total count in the above gender
-    var total = sex.value.filter(function(e) {
+    var total = gender.value.filter(function(e) {
       return e.key == 'total';
     })[0];
     // get survived count in the above gender
-    var survived = sex.value.filter(function(e) {
+    var survived = gender.value.filter(function(e) {
       return e.key == 'survived';
     })[0];
     // increment the total count and survived count
@@ -134,11 +134,15 @@ function aggregate(data) {
 }
 
 function draw(rawData, aggData) {
+  var ICON_COLOR = {
+    'female': 'deepPink',
+    'male': 'deepSkyBlue'
+  };
   var width = 1000;
   var barHeight = 40;
   var gutter = 5;
-  var pclassLabelWidth = 170;
-  var genderLabelWidth = 70;
+  var pclassLabelWidth = 70;
+  var genderLabelWidth = 40;
   var height = barHeight * 6 + 100; // total 6 bars
 
   var xScale = d3.scale.linear().domain([0, rawData.length]).range([0, width]);
@@ -153,22 +157,25 @@ function draw(rawData, aggData) {
     .attr("transform", function(d, i) { return "translate(0," + i * d.value.length * barHeight + ")"; });
 
   var pclassLabel = pclass.append("text")
-    .text(function(d) { return "Passenger class " + d.key; })
+    .text(function(d) { return "Class " + d.key; })
     .attr('y', barHeight);
 
-  var sex = pclass.selectAll('g')
+  var gender = pclass.selectAll('g')
     .data(function(d) { return d.value; })
     .enter()
     .append('g')
     // have to use transform because g tag doesn't have x y dx dy attributes
     .attr('transform', function(d, i) { return 'translate(' + pclassLabelWidth + ', ' + i * barHeight + ')'; });
 
-  var sexLabel = sex.append('text')
-    .text(function(d) { return d.key; })
-    .attr('x', gutter)
-    .attr('y', barHeight / 2);
+  var genderLabel = gender.append('svg:foreignObject')
+    //.attr('x', gutter)
+    .attr('y', 5)
+    .append('xhtml:body')
+    .html(function(d) {
+      return '<i class="fa fa-' + d.key + '" style="font-size: 30px; color: ' + ICON_COLOR[d.key] + ';"></i>';
+    });
 
-  sex.selectAll('rect')
+  gender.selectAll('rect')
     .data(function(d) { return d.value; })
     .enter()
     .append('rect')
@@ -177,7 +184,7 @@ function draw(rawData, aggData) {
     .attr('class', function(d) { return d.key; })
     .attr('x', genderLabelWidth);
 
-  sex.append("text")
+  gender.append("text")
     .attr("x", function(d) {
       var total = d.value.filter(function(e) {
         return e.key == 'total';
@@ -194,8 +201,8 @@ function draw(rawData, aggData) {
       var survived = d.value.filter(function(e) {
         return e.key == 'survived';
       })[0].value;
-      var text = survived.toString() + '/' + total.toString();
-      return text;
+      var text = survived / total * 100;
+      return text.toFixed(2) + '%';
     });
 
   var legends = chart.append('g')
@@ -230,8 +237,16 @@ function draw(rawData, aggData) {
   var xAxis = d3.svg.axis().scale(xScale);
 
   //Create an SVG group Element for the Axis elements and call the xAxis function
-  var xAxisGroup = chart.append("g").call(xAxis)
-    .attr('transform', 'translate(239, 245)');
+  var xAxisGroup = chart.append('svg')
+    .attr('width', 700)
+    .append("g").call(xAxis)
+    .attr('width', 500)
+    .attr('transform', 'translate(' + (pclassLabelWidth + genderLabelWidth) + ', 245)');
+
+  xAxisGroup.append('text')
+    .attr('x', 200)
+    .attr('y', 50)
+    .text('count (person)')
 
 }
 
